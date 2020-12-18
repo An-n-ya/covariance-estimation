@@ -1,0 +1,1 @@
+• Kullback-leibler divergence between multivariate normal:D_{KL}\left(N(0,A_{1})||N(0,A_{1})\right)=\sum_{k+1}^{n}\frac{\lambda_{k}^{-1}+\log\lambda_{k}-1}{2}

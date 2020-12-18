@@ -1,0 +1,712 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass paper
+\begin_preamble
+\usepackage{amssymb}
+\def\m{\mathbf}
+\end_preamble
+\options onecolumn
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 10
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Structured Covariance Estimation via HPD Manifold Optimization
+\end_layout
+
+\begin_layout Author
+Huanyu Zhang
+\end_layout
+
+\begin_layout Abstract
+This paper considers the problem of estimating a structured covariance matrix
+ with an 
+\color magenta
+elliptical contoured distributions (ECDs)
+\color inherit
+ with zero mean.
+ This problem can always be formulated to optimize the maximum likelihood
+ (ML) problem under the hermitian positive definite (HPD) constraint.
+ First, we find that the ML estimator is geodesic convex (g-convex) which
+ allows global optimization.
+ Therefore, lots of convex optimization algorithms on manifolds can be applied
+ to this problem.
+ We will apply many manifold optimization methods to handle this problem.
+ In addition, Nesterov's accelerating gradient descent algorithms will be
+ implemented.
+ And we will compare with the fixed-point method.
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Estimating the covariance matrix is a common problem that is critically
+ important in many fields such as signal processing, wireless communications,
+ bioinformatics, and financial engineering.
+ 
+\end_layout
+
+\begin_layout Standard
+Classical covariance estimation has two basic assumptions: the number of
+ samples is larger than the dimensions of the samples; the samples are drawn
+ from an Gaussian distribution.
+ However, in practice, there are many applications holds neither of these
+ assumptions.
+\end_layout
+
+\begin_layout Standard
+For the situation of high dimension covariance estimation using small number
+ of samples, one kind of classical approaches is adding penalties to the
+ cost function which can exploit prior knowledge of the unknown parameters,
+ such as scalar penalties 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wang_maximum_2006"
+literal "false"
+
+\end_inset
+
+, matrix penalties 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wiesel_unified_2012"
+literal "false"
+
+\end_inset
+
+, and smoothness penalties 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bucciarelli_optimum_1996"
+literal "false"
+
+\end_inset
+
+.
+ Another approaches is the shrinkage technique, which includes shrinkage
+ to identity 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "chen_shrinkage_2010"
+literal "false"
+
+\end_inset
+
+, shrinkage to diagonal structure 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "schafer_shrinkage_2005"
+literal "false"
+
+\end_inset
+
+, and shrinkage to positive definite matrix 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wiesel_unified_2012"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For the situation of samples from the distribution except for Gaussian distribut
+ion.
+ An alternative to maximizing the likelihood is proposed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "musolas2020covariance"
+literal "false"
+
+\end_inset
+
+, which does not require assuming a particular probability distribution
+ for the data.
+ Another common study 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tyler_distribution-free_1987"
+literal "false"
+
+\end_inset
+
+ is to replace the Gaussian assumption with a more general scaled Gaussian
+ model, e.g., elliptical distributions.
+ Tyler's ML estimator 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pascal_covariance_2008"
+literal "false"
+
+\end_inset
+
+, a well-studied estimator, performs robustly in scaled Gaussian distribution,
+ the Tyler's estimator defined as the solution to the fixed-point equation
+\begin_inset Formula 
+\begin{equation}
+\mathbf{R}^{(k+1)}=\frac{K}{N}\sum_{i=1}^{N}\frac{\mathbf{x}_{i}\mathbf{x}_{i}^{T}}{\mathbf{x}_{i}^{T}\left(\mathbf{R}^{(k)}\right)^{-1}\mathbf{x}_{i}}
+\end{equation}
+
+\end_inset
+
+is a minimax estimator.
+ On the other hand, Tyler's ML estimator can also combine with the shrinkage
+ techniques 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wiesel_unified_2012"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In many scenarios, the covariance matrix has special structure naturally,
+ which implies a reduction in the number of parameters to be estimated,
+ and thus is beneficial to improving the estimation accuracy.
+ For example, Kronecker structures, also known as separable models, transposable
+ covariances models, or matrix-variate-normal models are typically used
+ when dealing with random matrices.
+ Covariance matrix estimation in Kronecker structures involves a non-convex
+ optimization.
+ But its maximum likelihood estimation function is g-convex 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wiesel_geodesic_2012"
+literal "false"
+
+\end_inset
+
+.
+ It is concluded that any local minimum of the cost function on a group
+ Kronecker constraint set is a global minimum.
+ Many numerical algorithms such as the majorization-minimization algorithm
+ is also proposed to solve the constrained minimization problem 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sun_robust_2016"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Problem Formulation
+\end_layout
+
+\begin_layout Standard
+Suppose a column vector 
+\begin_inset Formula $x$
+\end_inset
+
+ is drawn from an 
+\begin_inset Formula $N$
+\end_inset
+
+-dimensional Gaussian distribution with zero mean and covariance matrix
+ 
+\begin_inset Formula $\m R$
+\end_inset
+
+, the corresponding probability density function is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "burg_estimation_1982"
+literal "false"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+p(\m x)=(2\pi)^{-N/2}\det(\m R)^{-1/2}e^{-\frac{\m x^{T}\m R^{-1}\m x}{2}}.\label{eq:probability density function}
+\end{equation}
+
+\end_inset
+
+Now, instead of a single vector sample, suppose that we have 
+\begin_inset Formula $M$
+\end_inset
+
+ independent vector samples, 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+, 
+\begin_inset Formula $i=1$
+\end_inset
+
+ to 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ The 
+\color magenta
+probability density
+\color inherit
+ for this set of vectors follows from (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:probability density function"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) as
+\begin_inset Formula 
+\begin{equation}
+p(\m x_{1},\m x_{2},\ldots,\m x_{N})=(2\pi)^{-NM/2}\det(\m R)^{-M/2}e^{-\sum_{i=1}^{M}\frac{\m x_{i}^{T}\m R^{-1}\m x_{i}}{2}}.\label{eq:maximaize}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Formula $R$
+\end_inset
+
+ that has a special structure and maximizes (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:maximaize"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) is the 
+\begin_inset Quotes eld
+\end_inset
+
+maximum-likelihood
+\begin_inset Quotes erd
+\end_inset
+
+ estimate of the covariance matrix.
+ In order to simplify the equation (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:maximaize"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), we take the logarithm of it, we get
+\begin_inset Formula 
+\begin{equation}
+-\frac{MN}{2}\log(2\pi)-\frac{M}{2}\log\det(\mathbf{R})-\frac{1}{2}\sum_{m=1}^{M}x_{m}^{T}\mathbf{R}^{-1}x_{m}.
+\end{equation}
+
+\end_inset
+
+ Dropping the leading constant term and dividing by 
+\begin_inset Formula $M/2,$
+\end_inset
+
+ we define our optimization problem to be
+\begin_inset Formula 
+\begin{equation}
+\begin{aligned} & \mathop{\text{minimize}}_{\mathbf{R}} &  & \frac{1}{M}\log\det(\mathbf{R})+\sum_{m=1}^{M}\m x_{m}^{T}\mathbf{R}^{-1}\m x_{m}\\
+ & \mathop{\text{subject to}} &  & \mathbf{R}\in\text{HPD.}
+\end{aligned}
+\label{eq:optimization}
+\end{equation}
+
+\end_inset
+
+The objective function in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:optimization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) is non-convex in Euclidean spaces.
+ However, from the perspective of geodesic convexity, the objective function
+ can be viewed as g-convex, which will be proved in the next section.
+\end_layout
+
+\begin_layout Section
+Convexity of Objective Function
+\end_layout
+
+\begin_layout Standard
+First, we will introduce the definition of g-convex sets and the scalar
+ g-convex functions.
+\end_layout
+
+\begin_layout Itemize
+Definition 1 (g-convex sets).
+ Let 
+\begin_inset Formula $\mathcal{M}$
+\end_inset
+
+ be a d-dimensional connected 
+\begin_inset Formula $C^{2}$
+\end_inset
+
+ Riemannian manifold.
+ A set 
+\begin_inset Formula $\mathcal{X}\subset\mathcal{M}$
+\end_inset
+
+ is called geodesically convex if any two points of 
+\begin_inset Formula $\mathcal{X}$
+\end_inset
+
+ are joined by a geodesic lying in 
+\begin_inset Formula $\mathcal{X}$
+\end_inset
+
+.
+ That is, if 
+\begin_inset Formula $x,y\in\mathcal{X},$
+\end_inset
+
+ then there exists a shortest path 
+\begin_inset Formula $\gamma:[0,1]\rightarrow\mathcal{X}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\gamma(0)=x$
+\end_inset
+
+ and 
+\begin_inset Formula $\gamma(1)=y$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+Definition 2 (g-convex functions).
+ Let 
+\begin_inset Formula $\mathcal{X}\subset\mathcal{M}$
+\end_inset
+
+ be a g-convex set.
+ A function 
+\begin_inset Formula $\phi:\mathcal{X}\rightarrow\mathbb{R}$
+\end_inset
+
+ is called geodesically convex if for any 
+\begin_inset Formula $x,y\in\mathcal{X},$
+\end_inset
+
+ we have the inequality (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:g-convex"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) 
+\begin_inset Formula 
+\begin{equation}
+\phi(\gamma(t))\leq(1-t)\phi(\gamma(0))+t\phi(\gamma(1))=(1-t)\phi(x)+t\phi(y).\label{eq:g-convex}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $\gamma(\cdot)$
+\end_inset
+
+ is the geodesic 
+\begin_inset Formula $\gamma:[0,1]\rightarrow\mathcal{X}$
+\end_inset
+
+ with 
+\begin_inset Formula $\gamma(0)=x$
+\end_inset
+
+ and 
+\begin_inset Formula $\gamma(1)=y$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To define g-convex functions on HPD matrices, we first define the 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+ as a differentiable Riemannian manifold where geodesics between points
+ are available in closed form.
+ At any point 
+\begin_inset Formula $A\in\mathbb{P}_{d}$
+\end_inset
+
+, its Riemannian metric is defined as 
+\begin_inset Formula $ds=\|\m A^{\frac{1}{2}}d\m A\m A^{-\frac{1}{2}}\|_{F}$
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after "6.1.6"
+key "PositiveDefiniteMatrices"
+literal "false"
+
+\end_inset
+
+.
+ For 
+\begin_inset Formula $\m A,\m B\in\mathbb{P}_{d}$
+\end_inset
+
+ there is a unique geodesic path
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sra_conic_2015"
+literal "false"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+\gamma(t)=\m A\#_{t}\m B:=\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}},\qquad t\in[0,1].
+\end{equation}
+
+\end_inset
+
+The midpoint of this path, namely, 
+\begin_inset Formula $A\#_{1/2}B$
+\end_inset
+
+, is called the matrix geometric mean, we drop the 
+\begin_inset Formula $1/2$
+\end_inset
+
+ and denote it simply by 
+\begin_inset Formula $A\#B$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+According to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ANDO1979203"
+literal "false"
+
+\end_inset
+
+, the map 
+\begin_inset Formula $(\m A,\m B)\rightarrow\m A\#_{t}\m B$
+\end_inset
+
+, 
+\begin_inset Formula $\m A,\m B\in\mathbb{P}_{d}$
+\end_inset
+
+ is concave.
+ Then we have
+\begin_inset Formula 
+\begin{equation}
+\m A\#_{t}\m B\preceq(1-t)\m A+t\m B.\label{eq:tracial}
+\end{equation}
+
+\end_inset
+
+ (where 
+\begin_inset Formula $\preceq$
+\end_inset
+
+ denotes the Löwner Partial order)
+\end_layout
+
+\begin_layout Standard
+In order to prove the convexity of the objective function in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:optimization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), we firstly focus on the last part.
+ We are going to prove that 
+\begin_inset Formula $f(\m A)=\m x^{T}\m A^{-1}\m x$
+\end_inset
+
+ is g-convex.
+ To prove this is equal to verify the midpoint convexity:
+\begin_inset Formula 
+\begin{equation}
+f(\m A\#\m B)\le\frac{f(\m A)+f(\m B)}{2},
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\m A,\m B\in\mathbb{P}_{d}$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $(\m A\#\m B)^{-1}=\m A^{-1}\#\m B^{-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\m A^{-1}\#\m B^{-1}\preceq\frac{\m A^{-1}+\m B^{-1}}{2}$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "4.16"
+key "PositiveDefiniteMatrices"
+literal "false"
+
+\end_inset
+
+.
+ Therefore
+\begin_inset Formula 
+\begin{equation}
+f(\m A\#\m B)=\m x^{T}(\m A^{-1}\#\m B^{-1})\m x\le\m x^{T}\frac{\m A^{-1}+\m B^{-1}}{2}\m x=\frac{\m x^{T}\m A^{-1}\m x+\m x^{T}\m B^{-1}\m x}{2}=\frac{f(\m A)+f(\m B)}{2}.
+\end{equation}
+
+\end_inset
+
+We prove convexity of the first part of objective function then,
+\begin_inset Formula 
+\[
+\begin{aligned}f(\m A\#\m B) & =\log\det(\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}})\\
+ & =\log\det(\m A)+t\log\det(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})\\
+ & =(1-t)\log\det(\m A)+t\log\det(\m B)\\
+ & =(1-t)f(\m A)+tf(\m B).
+\end{aligned}
+\]
+
+\end_inset
+
+Therefore, the whole objective function is g-convex.
+ 
+\end_layout
+
+\begin_layout Section
+Optimization
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "covariance_estimation"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

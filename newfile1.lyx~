@@ -1,0 +1,268 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+
+\usepackage{amsfonts}
+\usepackage{babel}
+
+
+\usepackage{extarrows}
+\usepackage{listings}
+\usepackage{xcolor}
+
+
+\usepackage{graphicx}\usepackage{subfigure}
+\usepackage{cite}
+\usepackage{amsthm}
+\usepackage{amsfonts}\usepackage{textcomp}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{listings}
+\definecolor{salmon}{rgb}{1, 0.5020, 0.4471}
+
+\lstdefinestyle{mystyle}{
+    numberstyle=,
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\providecommand{\U}[1]{\protect\rule{.1in}{.1in}}
+\topmargin            -18.0mm
+\textheight           226.0mm
+\oddsidemargin      -4.0mm
+\textwidth            166.0mm
+\def\baselinestretch{1.5}
+
+
+\newcommand{\Rbb}{\mathbb{R}}
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\Ib}{\mathbf{I}}
+\newcommand{\vb}{\mathbf{v}}
+\newcommand{\Ucal}{\mathcal{U}}
+\newcommand{\Wcal}{\mathcal{W}}
+\newcommand{\Vcal}{\mathcal{V}}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Ncal}{\mathcal{N}} 
+
+
+\def\Q{\mathbf{Q}}
+\def\A{\mathbf{A}}
+\def\R{\mathbf{R}}
+\def\I{\mathbf{I}}
+
+\def\m{\mathbf}
+\end_preamble
+\options ruled,linesnumbered
+\use_default_options false
+\begin_modules
+algorithm2e
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding iso8859-15
+\fontencoding T1
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement tbph
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks false
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref section
+\pdf_pdfusetitle false
+\pdf_quoted_options "colorlinks"
+\papersize letterpaper
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\fontcolor #00ff00
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Covariance Estimation on Manifold
+\end_layout
+
+\begin_layout Section*
+The disadvantage of maximizing the likelihood
+\end_layout
+
+\begin_layout Standard
+Estimation in both settings often involves solving an optimization problem,
+ usually maximizing the likelihood of a data set.
+ Defining this objective function requires prescribing a specific probability
+ distribution for the data, which may not be readily available.
+ Moreover, maximum likelihood is not a proper notion of distance on the
+ manifold of symmetric positive-(semi) definite matrices.
+\end_layout
+
+\begin_layout Section*
+Basic tools
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Covariance function and family:
+\series default
+ A one-parameter covariance function is a map 
+\begin_inset Formula $\phi:\mathbb{R}\rightarrow S_{+}(n)$
+\end_inset
+
+; its corresponding covariance family is the image of 
+\begin_inset Formula $\phi$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Spectral functions:
+\series default
+ Let 
+\begin_inset Formula $A_{1}$
+\end_inset
+
+ be a matrix in 
+\begin_inset Formula $S_{+}(n)$
+\end_inset
+
+.
+ A function 
+\begin_inset Formula $F(A_{1})$
+\end_inset
+
+ is a spectral function if it is a differentiable and symmetric map from
+ the eigenvalues of 
+\begin_inset Formula $A_{1}$
+\end_inset
+
+ to the reals.
+ The function 
+\begin_inset Formula $F$
+\end_inset
+
+ can be understood as a composition of 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ the eigenvalue function and a differentiable and symmetric map 
+\begin_inset Formula $f$
+\end_inset
+
+; that is, 
+\begin_inset Formula $F(A_{1})=\lambda(A_{1})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Some spectral functions are introduced below.
+\end_layout
+
+\begin_layout Itemize
+Natural distance in 
+\begin_inset Formula $S_{+}(n):$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+d(A_{1},A_{2})=\sqrt{\sum_{k=1}^{n}\log^{2}(\lambda_{K})}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Kullback-leibler divergence between multivariate normal:
+\begin_inset Formula 
+\[
+D_{KL}\left(N(0,A_{1})||)N(0,A_{1})\right)=\sum_{k+1}^{n}\frac{\lambda_{k}^{-1}+\log\lambda_{k}-1}{2}
+\]
+
+\end_inset
+
+ 
+\end_layout
+
+\end_body
+\end_document
