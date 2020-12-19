@@ -4,7 +4,7 @@
 \begin_header
 \save_transient_properties true
 \origin unavailable
-\textclass paper
+\textclass IEEEtran
 \begin_preamble
 \usepackage{amssymb}
 \def\m{\mathbf}
@@ -320,7 +320,7 @@ Now, instead of a single vector sample, suppose that we have
 \end_inset
 
  independent vector samples, 
-\begin_inset Formula $x_{i}$
+\begin_inset Formula $\m x_{i}$
 \end_inset
 
 , 
@@ -394,7 +394,7 @@ noprefix "false"
 ), we take the logarithm of it, we get
 \begin_inset Formula 
 \begin{equation}
--\frac{MN}{2}\log(2\pi)-\frac{M}{2}\log\det(\mathbf{R})-\frac{1}{2}\sum_{m=1}^{M}x_{m}^{T}\mathbf{R}^{-1}x_{m}.
+-\frac{MN}{2}\log(2\pi)-\frac{M}{2}\log\det(\mathbf{R})-\frac{1}{2}\sum_{i=1}^{M}\m x_{i}^{T}\mathbf{R}^{-1}\m x_{i}.
 \end{equation}
 
 \end_inset
@@ -406,7 +406,7 @@ noprefix "false"
  we define our optimization problem to be
 \begin_inset Formula 
 \begin{equation}
-\begin{aligned} & \mathop{\text{minimize}}_{\mathbf{R}} &  & \frac{1}{M}\log\det(\mathbf{R})+\sum_{m=1}^{M}\m x_{m}^{T}\mathbf{R}^{-1}\m x_{m}\\
+\begin{aligned} & \mathop{\text{minimize}}_{\mathbf{R}} &  & \frac{1}{M}\log\det(\mathbf{R})+\sum_{i=1}^{M}\log(\m x_{i}^{T}\mathbf{R}^{-1}\m x_{i})\\
  & \mathop{\text{subject to}} &  & \mathbf{R}\in\text{HPD.}
 \end{aligned}
 \label{eq:optimization}
@@ -426,16 +426,16 @@ noprefix "false"
 
 ) is concave.
  We first restrict the function 
-\begin_inset Formula $\log\det(\m X)$
+\begin_inset Formula $\log\det(\m R)$
 \end_inset
 
  to a line, let 
-\begin_inset Formula $g(t)=\log\det(\m X+t\m V)$
+\begin_inset Formula $g(t)=\log\det(\m R+t\m V)$
 \end_inset
 
 .
  We can check the convexity of 
-\begin_inset Formula $\log\det(\m X)$
+\begin_inset Formula $\log\det(\m R)$
 \end_inset
 
  by checking the convexity of 
@@ -444,11 +444,11 @@ noprefix "false"
 
 
 \begin_inset Formula 
-\[
-\begin{aligned}g(t) & =\log\det(\m X)+\log\det(\m I+t\m X^{-\frac{1}{2}}\m V\m X^{-\frac{1}{2}})\\
- & =\log\det(\m X)+\sum_{i=1}^{n}\log(1+t\lambda_{i}).
+\begin{equation}
+\begin{aligned}g(t) & =\log\det(\m R)+\log\det(\m I+t\m R^{-\frac{1}{2}}\m V\m R^{-\frac{1}{2}})\\
+ & =\log\det(\m R)+\sum_{i=1}^{n}\log(1+t\lambda_{i}).
 \end{aligned}
-\]
+\end{equation}
 
 \end_inset
 
@@ -457,7 +457,7 @@ where
 \end_inset
 
  are the eigenvalues of 
-\begin_inset Formula $\m X^{-\frac{1}{2}}\m V\m X^{-\frac{1}{2}}$
+\begin_inset Formula $\m R^{-\frac{1}{2}}\m V\m R^{-\frac{1}{2}}$
 \end_inset
 
 .
@@ -466,7 +466,7 @@ where
 \end_inset
 
  is concave, hence 
-\begin_inset Formula $\log\det(\m X)$
+\begin_inset Formula $\log\det(\m R)$
 \end_inset
 
  is concave.
@@ -481,7 +481,15 @@ noprefix "false"
 
 \end_inset
 
-) is non-convex in Euclidean spaces.
+) is non-convex in Euclidean spaces
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sun_robust_2016"
+literal "false"
+
+\end_inset
+
+.
  However, from the perspective of geodesic convexity, the objective function
  can be viewed as g-convex, which will be proved in the next section.
 \end_layout
@@ -651,7 +659,7 @@ literal "false"
 
 \begin_inset Formula 
 \begin{equation}
-\gamma(t)=\m A\#_{t}\m B:=\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}},\qquad t\in[0,1].
+\gamma(t)=\m A\#_{t}\m B:=\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}},\qquad t\in[0,1].\label{eq:geodesic line}
 \end{equation}
 
 \end_inset
@@ -752,7 +760,7 @@ literal "false"
 
 \end_inset
 
-.
+ (the arithmetic-geometry mean inequality).
  Therefore
 \begin_inset Formula 
 \begin{equation}
@@ -763,13 +771,13 @@ f(\m A\#\m B)=\m x^{T}(\m A^{-1}\#\m B^{-1})\m x\le\m x^{T}\frac{\m A^{-1}+\m B^
 
 We prove convexity of the first part of objective function then,
 \begin_inset Formula 
-\[
+\begin{equation}
 \begin{aligned}f(\m A\#\m B) & =\log\det(\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}})\\
  & =\log\det(\m A)+t\log\det(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})\\
  & =(1-t)\log\det(\m A)+t\log\det(\m B)\\
  & =(1-t)f(\m A)+tf(\m B).
 \end{aligned}
-\]
+\end{equation}
 
 \end_inset
 
@@ -778,10 +786,396 @@ Therefore, the whole objective function is g-convex.
 \end_layout
 
 \begin_layout Section
-Optimization
+Manifold Optimization
 \end_layout
 
 \begin_layout Standard
+Let 
+\begin_inset Formula $\m X=[\m x_{1},\m x_{2},\ldots,\m x_{M}]$
+\end_inset
+
+, 
+\begin_inset Formula $\m C=\m R^{-1}$
+\end_inset
+
+, and reformulate the objective function in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:optimization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), we have the new optimization problem below
+\begin_inset Formula 
+\begin{equation}
+\begin{aligned} & \mathop{\text{minimize}}_{\mathbf{C}} &  & -\frac{1}{M}\log\det(\mathbf{C})+\text{tr}(\m X^{T}\m C\m X)\\
+ & \mathop{\text{subject to}} &  & \mathbf{C}\in\text{HPD.}
+\end{aligned}
+\label{eq:optimization-2}
+\end{equation}
+
+\end_inset
+
+For the objective function in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:optimization-2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), the differential is given by
+\begin_inset Formula 
+\begin{equation}
+\begin{aligned}Df(\m C)[\xi_{\m C}] & =-\frac{1}{M}\operatorname{tr}\left(\m C^{-1}\xi_{\m C}\right)+\operatorname{tr}(\m X\m X^{T}\xi_{\m C})\\
+ & =\operatorname{tr}\left((\m X\m X^{T}-\m C^{-1}/M)\xi_{\m C}\right).
+\end{aligned}
+\label{eq:differential}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Inner product and gradient
+\end_layout
+
+\begin_layout Standard
+Gradient-based optimization requires the notions of a gradient and an inner
+ product, which will be introduced here for 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+.
+ The inner product most frequently associated with 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+ is: for 
+\begin_inset Formula $\xi_{\m C},\eta_{\m C}\in T_{\m C}\mathbb{P}_{d}$
+\end_inset
+
+, which is called intrinsic inner product, given by
+\begin_inset Formula 
+\begin{equation}
+\langle\xi_{\m C},\eta_{\m C}\rangle_{\m C}=\operatorname{tr}(\xi_{\m C}\m C^{-1}\eta_{\m C}\m C^{-1}).\label{eq:inner product}
+\end{equation}
+
+\end_inset
+
+Another inner product formulation called induced inner product was tested
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "jeuris_survey_nodate"
+literal "false"
+
+\end_inset
+
+ for 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+.
+ The induced inner product is given by
+\begin_inset Formula 
+\begin{equation}
+\langle\xi_{\m C},\eta_{\m C}\rangle_{\m C}^{sym}=\operatorname{tr}(\xi_{\m C}\eta_{\m C}).\label{eq:induced inner product}
+\end{equation}
+
+\end_inset
+
+The two inner product (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:inner product"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) and (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:induced inner product"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) deduce different geodesics.
+ The intrinsic inner product leads to the geodesic (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:geodesic line"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) which is positive definite and monotone, however, the induced inner product
+ leads to the geodesics below
+\begin_inset Formula 
+\begin{equation}
+\gamma^{sym}(t)=\m A+t(\m B-\m A).
+\end{equation}
+
+\end_inset
+
+these geodesics are no longer positive definite for all 
+\begin_inset Formula $\m A,\m B,t$
+\end_inset
+
+ and thus not an element in 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+.
+ Whereas, for sufficiently small 
+\begin_inset Formula $t$
+\end_inset
+
+, 
+\begin_inset Formula $\gamma^{sym}(t)$
+\end_inset
+
+ is in 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+.
+ The authors in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "jeuris_survey_nodate"
+literal "false"
+
+\end_inset
+
+ observed that the intrinsic inner product leads to the better convergence
+ speed for the tested algorithms than induced inner product.
+ Therefore, we choose intrinsic inner product in our algorithm.
+\end_layout
+
+\begin_layout Standard
+Furthermore, the gradient of the objective function gives the direction
+ of steepest ascent.
+ It can be defined at each point 
+\begin_inset Formula $\m C$
+\end_inset
+
+ as the tangent vector 
+\begin_inset Formula $\operatorname{grad}f(\m C)\in T_{\m C}M$
+\end_inset
+
+ such that
+\begin_inset Formula 
+\begin{equation}
+\langle\operatorname{grad}f(\m C),\xi_{\m C}\rangle_{\m C}=Df(\m C)[\xi_{\m C}],\quad\forall\xi_{\m C}\in T_{\m C}M.
+\end{equation}
+
+\end_inset
+
+Using (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:differential"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) we find for our current setting when using the inner product in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:inner product"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+)
+\begin_inset Formula 
+\begin{equation}
+\operatorname{grad}f(\m C)=\m C(\m X\m X^{T}-\m C^{-1}/M)\m C
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Retraction
+\end_layout
+
+\begin_layout Standard
+Our optimization algorithms also require a map 
+\begin_inset Formula $R_{\m C}:T_{\m C}\mathbb{P}_{d}\rightarrow\mathbb{P}_{d}$
+\end_inset
+
+ called retraction that locally maps 
+\begin_inset Formula $T_{\m C}\mathbb{P}_{d}$
+\end_inset
+
+ onto the manifold 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+ itself while preserving the first-order information of the tangent space
+ in this point (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Retraction"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ If the manifold is Riemannian, a particular retraction is the exponential
+ map, i.e., moving along a geodesic.
+ The intrinsic inner product of (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:inner product"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) of the Riemannian manifold leads to the following exponential map:
+\begin_inset Formula 
+\begin{equation}
+R_{\m C}^{exp}(\xi_{\m C})=\m C^{\frac{1}{2}}e^{(\m C^{-\frac{1}{2}}\xi\m C^{-\frac{1}{2}})}\m C^{-\frac{1}{2}},\quad\xi\in T_{\m C}\mathbb{P}_{d}.\label{eq:exponential}
+\end{equation}
+
+\end_inset
+
+Recall that the geodesic between 
+\begin_inset Formula $\m A,\m B\in\mathbb{P}_{d}$
+\end_inset
+
+ is given by
+\begin_inset Formula 
+\begin{equation}
+\begin{aligned}\gamma & =\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}}\\
+ & =\m A^{\frac{1}{2}}\operatorname{exp}\left(t\operatorname{log}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})\right)\m A^{\frac{1}{2}},\quad t\in[0,1].
+\end{aligned}
+\end{equation}
+
+\end_inset
+
+We obtain (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:exponential"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) as 
+\begin_inset Formula $\gamma(t)$
+\end_inset
+
+ evaluated at 
+\begin_inset Formula $t=1$
+\end_inset
+
+ with 
+\begin_inset Formula $\xi_{\m C}=\m A^{\frac{1}{2}}\operatorname{log}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})\m A^{\frac{1}{2}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\m A=\m C$
+\end_inset
+
+.
+ If we use the second order approximation which is given by
+\begin_inset Formula 
+\begin{equation}
+e^{\m X}=\m I+\m X+\frac{1}{2}\m X^{2}+\mathcal{O}(\m X^{3}),\quad\m X\rightarrow0.
+\end{equation}
+
+\end_inset
+
+ to substitute the retraction in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:exponential"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), we have
+\begin_inset Formula 
+\begin{equation}
+R_{\m C}(\xi_{\m C})=\m C+\xi_{\m C}+\frac{1}{2}\xi_{\m C}C^{-1}\xi_{\m C}.
+\end{equation}
+
+\end_inset
+
+From a numerical perspective, the retraction above gives a better computational
+ speed.
+\begin_inset Float figure
+placement tbph
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure1.pdf
+	width 50page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Retraction"
+
+\end_inset
+
+Retraction
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
