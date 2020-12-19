@@ -92,10 +92,6 @@ Huanyu Zhang
 
 \begin_layout Abstract
 This paper considers the problem of estimating a structured covariance matrix
- with an 
-\color magenta
-elliptical contoured distributions (ECDs)
-\color inherit
  with zero mean.
  This problem can always be formulated to optimize the maximum likelihood
  (ML) problem under the hermitian positive definite (HPD) constraint.
@@ -104,9 +100,24 @@ elliptical contoured distributions (ECDs)
  Therefore, lots of convex optimization algorithms on manifolds can be applied
  to this problem.
  We will apply many manifold optimization methods to handle this problem.
- In addition, Nesterov's accelerating gradient descent algorithms will be
- implemented.
- And we will compare with the fixed-point method.
+\end_layout
+
+\begin_layout Abstract
+On the other hand, we choose to build covariance family by connecting representa
+tive covariance matrices (called 
+\begin_inset Quotes eld
+\end_inset
+
+anchors
+\begin_inset Quotes erd
+\end_inset
+
+) through geodesics.
+ The resulting covariance classes can thus be tailored to the problem of
+ interest.
+ Second, as an alternative to maximizing the likelihood, we also advocate
+ for a differential geometric approach to estimation: minimizing the geodesic
+ distance, which can be understood as a projection.
 \end_layout
 
 \begin_layout Section
@@ -403,7 +414,64 @@ noprefix "false"
 
 \end_inset
 
-The objective function in (
+The former part in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:optimization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) is concave.
+ We first restrict the function 
+\begin_inset Formula $\log\det(\m X)$
+\end_inset
+
+ to a line, let 
+\begin_inset Formula $g(t)=\log\det(\m X+t\m V)$
+\end_inset
+
+.
+ We can check the convexity of 
+\begin_inset Formula $\log\det(\m X)$
+\end_inset
+
+ by checking the convexity of 
+\begin_inset Formula $g(t)$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\begin{aligned}g(t) & =\log\det(\m X)+\log\det(\m I+t\m X^{-\frac{1}{2}}\m V\m X^{-\frac{1}{2}})\\
+ & =\log\det(\m X)+\sum_{i=1}^{n}\log(1+t\lambda_{i}).
+\end{aligned}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\lambda_{i}$
+\end_inset
+
+ are the eigenvalues of 
+\begin_inset Formula $\m X^{-\frac{1}{2}}\m V\m X^{-\frac{1}{2}}$
+\end_inset
+
+.
+ We can find that 
+\begin_inset Formula $g(t)$
+\end_inset
+
+ is concave, hence 
+\begin_inset Formula $\log\det(\m X)$
+\end_inset
+
+ is concave.
+ While the last part is non-convex (code test).
+ Hence the objective function in (
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:optimization"
@@ -529,12 +597,24 @@ To define g-convex functions on HPD matrices, we first define the
 
  as a differentiable Riemannian manifold where geodesics between points
  are available in closed form.
- At any point 
+ Recall the inner product 
+\begin_inset Formula $\langle\mathbf{A}\text{,\ensuremath{\mathbf{B}}\ensuremath{\rangle=\text{tr}\mathbf{A}^{*}\mathbf{B}}}$
+\end_inset
+
+ and the associated norm 
+\begin_inset Formula $\|\mathbf{A}\|_{2}=(\text{tr}\mathbf{A}^{*}\mathbf{A})^{\frac{1}{2}}$
+\end_inset
+
+ which leads to the Riemannian metric on 
+\begin_inset Formula $\mathbb{P}_{d}$
+\end_inset
+
+—At any point 
 \begin_inset Formula $A\in\mathbb{P}_{d}$
 \end_inset
 
 , its Riemannian metric is defined as 
-\begin_inset Formula $ds=\|\m A^{\frac{1}{2}}d\m A\m A^{-\frac{1}{2}}\|_{F}$
+\begin_inset Formula $ds=\|\m A^{\frac{1}{2}}d\m A\m A^{-\frac{1}{2}}\|_{2}=\left[\text{tr}(\mathbf{A}^{-1}d\mathbf{A})^{2}\right]^{\frac{1}{2}}$
 \end_inset
 
 
@@ -551,7 +631,16 @@ literal "false"
 \begin_inset Formula $\m A,\m B\in\mathbb{P}_{d}$
 \end_inset
 
- there is a unique geodesic path
+ there is a unique geodesic path joining 
+\begin_inset Formula $\mathbf{A}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{B}$
+\end_inset
+
+.
+ This geodesic has a parametrization
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sra_conic_2015"
