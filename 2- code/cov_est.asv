@@ -1,0 +1,42 @@
+rng('default')
+n = 10;
+
+D = diag(rand(n,1));
+U = orth(rand(n,n));
+R0 = U' * D * U;
+R0 = R0/trace(R0);
+% m = 100;
+i = 1;
+for m = 20:10:100
+for j = 1:100
+X = mvnrnd(zeros(n,1),R0,m);
+
+manifold = sympositivedefinitefactory(n);
+maniflod.transp = manifold.paralleltransp;
+problem.M = manifold;
+problem.cost = @(R) -1/m * log(det(R)) + trace(X*R*X');
+problem.grad = @(R) R*(X'*X-inv(R)/m)*R;
+ 
+% checkgradient(problem)
+
+[R, xcost, info, options] = conjugategradient(problem);
+R = inv(R)/trace(inv(R));
+% inv(R)/m^2-cov(X)
+% MSE(i) = mse(inv(R)/m^2-R0);
+MSE(i) = mse(R,R0);
+i=i+1;
+
+end
+plot(MSE)
+
+% figure(1)
+% hold on
+% semilogy([info.iter], [info.gradnorm], '.-');
+% xlabel('Iteration number');
+% ylabel('Norm of the gradient of f');
+% 
+% figure(2)
+% hold on
+% loglog([info.time], [info.gradnorm], '.-');
+% xlabel('Time');
+% ylabel('Norm of the gradient of f');

@@ -1559,7 +1559,22 @@ Hessian by decomposition
 \end_layout
 
 \begin_layout Standard
-content required
+Another way to compute Hessian is described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "jeuris_survey_nodate,ferreira_newton_2013,ferreira_newton_2006,rentmeesters_algorithm_nodate"
+literal "false"
+
+\end_inset
+
+.
+ This method is established by exploiting some results about Jacobi fields
+ together with the fact that the curvature endomorphism 
+\begin_inset Formula $R$
+\end_inset
+
+ is parallel in these manifolds.
+ The exact procedure consists 
 \end_layout
 
 \begin_layout Subsubsection

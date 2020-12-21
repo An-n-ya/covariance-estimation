@@ -781,7 +781,170 @@ We prove convexity of the first part of objective function then,
 
 \end_inset
 
+If we take the logarithm to the second term, it is still g-convex.
+ The proof is given below.
+\end_layout
+
+\begin_layout Proof
+first we consider the eigenvalue decomposition
+\begin_inset Formula 
+\[
+\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}}=\m U\operatorname{diag}\{d_{j}\}\m U^{T},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $d_{j}>0$
+\end_inset
+
+ are the eigenvalues and 
+\begin_inset Formula $\m U$
+\end_inset
+
+ is the matrix of eigenvectors.
+ We then consider the convexity of the second term in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:optimization"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+)
+\begin_inset Formula 
+\[
+\begin{aligned}\operatorname{log}(\m x_{i}^{T}(\m A\#_{t}\m B)^{-1}\m x_{i}) & =\operatorname{log}\m x_{i}^{T}\m A^{-\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{-t}\m A^{-\frac{1}{2}}\m x_{i}\\
+ & =\operatorname{log}\m x_{i}^{T}\m A^{-\frac{1}{2}}\m U\operatorname{diag}\{d_{j}^{-t}\}\m U^{T}\m A^{-\frac{1}{2}}\m x_{i}\\
+ & =\operatorname{log}\sum_{j}\left(\m U^{T}\m A^{-\frac{1}{2}}\m x_{i}\right)_{j}^{2}d_{j}^{-t}\\
+ & =\operatorname{log}\sum_{j}\left(\m U^{T}\m A^{-\frac{1}{2}}\m x_{i}\right)_{j}^{2}e^{-t\operatorname{log}(d_{j})}.
+\end{aligned}
+\]
+
+\end_inset
+
+The equation above is convex log-sum-exp expression in 
+\begin_inset Formula $t$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 Therefore, the whole objective function is g-convex.
+ Next we will introduce the useful theorem about g-convex.
+\end_layout
+
+\begin_layout Theorem
+Let 
+\begin_inset Formula $x^{*}\in\mathcal{M}$
+\end_inset
+
+ be a local minimum point of 
+\begin_inset Formula $f:\mathcal{M\rightarrow\mathbb{R}}$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $f$
+\end_inset
+
+ is convex, then 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+ is a global minimum point.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "udriste_convex_1994"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+By hypothesis there exists 
+\begin_inset Formula $\epsilon>0$
+\end_inset
+
+ such that
+\begin_inset Formula 
+\[
+f(x^{*})\le f(x),\quad\forall x\in\{y|x^{*}-\epsilon\le y\le x^{*}+\epsilon,y\in\mathcal{M}\}.
+\]
+
+\end_inset
+
+Suppose 
+\begin_inset Formula $z\in\mathcal{M}$
+\end_inset
+
+ and 
+\begin_inset Formula $f(z)<f(x^{*})$
+\end_inset
+
+.
+ Consider the geodesic line from 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+ to 
+\begin_inset Formula $z$
+\end_inset
+
+ denote as 
+\begin_inset Formula $\gamma(t)$
+\end_inset
+
+, 
+\begin_inset Formula $t\in(0,1)$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $f$
+\end_inset
+
+ is convex, it follows
+\begin_inset Formula 
+\[
+f(\gamma(t))\le(1-t)f(x^{*})+tf(z)<f(x^{*}).
+\]
+
+\end_inset
+
+But 
+\begin_inset Formula $x=\gamma(t)\in\{y|x^{*}-\epsilon\le y\le x^{*}+\epsilon,y\in\mathcal{M}\},$
+\end_inset
+
+ for some 
+\begin_inset Formula $t\in(0,1)$
+\end_inset
+
+ and hence 
+\begin_inset Formula $f(x)\ge f(x^{*})$
+\end_inset
+
+, which is a contradiction and hence
+\begin_inset Formula 
+\[
+f(z)\ge f(x^{*}),\quad\forall z\in\mathcal{M}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This result shows that general optimization algorithms can attain global
+ solution.
+ We will introduce several optimization algorithms in the following sections.
  
 \end_layout
 
@@ -1009,7 +1172,7 @@ noprefix "false"
 )
 \begin_inset Formula 
 \begin{equation}
-\operatorname{grad}f(\m C)=\m C(\m X\m X^{T}-\m C^{-1}/M)\m C
+\operatorname{grad}f(\m C)=\m C(\m X\m X^{T}-\m C^{-1}/M)\m C\label{eq:grad}
 \end{equation}
 
 \end_inset
@@ -1018,7 +1181,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsection
-Retraction
+Retraction and vector transport
 \end_layout
 
 \begin_layout Standard
@@ -1073,7 +1236,7 @@ Recall that the geodesic between
  is given by
 \begin_inset Formula 
 \begin{equation}
-\begin{aligned}\gamma & =\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}}\\
+\begin{aligned}\gamma(t) & =\m A^{\frac{1}{2}}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})^{t}\m A^{\frac{1}{2}}\\
  & =\m A^{\frac{1}{2}}\operatorname{exp}\left(t\operatorname{log}(\m A^{-\frac{1}{2}}\m B\m A^{-\frac{1}{2}})\right)\m A^{\frac{1}{2}},\quad t\in[0,1].
 \end{aligned}
 \end{equation}
@@ -1135,6 +1298,65 @@ R_{\m C}(\xi_{\m C})=\m C+\xi_{\m C}+\frac{1}{2}\xi_{\m C}C^{-1}\xi_{\m C}.
 
 From a numerical perspective, the retraction above gives a better computational
  speed.
+\end_layout
+
+\begin_layout Standard
+Next, in order to perform, among others, the conjugate gradient algorithm,
+ we need to somehow relate a tangent vector at some point 
+\begin_inset Formula $\m X\in\mathbb{P}_{d}$
+\end_inset
+
+ to another point 
+\begin_inset Formula $\m Y\in\mathbb{P}_{d}$
+\end_inset
+
+.
+ This leads to the concept of a vector transport 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "10.5"
+key "boumal_introduction_nodate"
+literal "false"
+
+\end_inset
+
+ (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Vector-transport"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ The vector transport for the intrinsic inner product is given by
+\begin_inset Formula 
+\begin{equation}
+\mathcal{T}_{\m X,\m Y}(\xi_{\m X})=\m X^{\frac{1}{2}}(\m X^{-\frac{1}{2}}\m Y\m X^{-\frac{1}{2}})^{\frac{1}{2}}\m X^{-\frac{1}{2}}\xi_{\m X}\m X^{-\frac{1}{2}}(\m X^{-\frac{1}{2}}Y\m X^{-\frac{1}{2}})^{\frac{1}{2}}\m X^{\frac{1}{2}},\quad\xi_{\m X}\in T_{\m X}\mathbb{P}_{d}.
+\end{equation}
+
+\end_inset
+
+this parallel transport can be written in a compact form that is also computatio
+nally more advantageous, namely,
+\begin_inset Formula 
+\begin{equation}
+\mathcal{T}_{\m X,\m Y}(\xi_{\m X})=E\xi_{\m X}E^{*},\quad\text{where }E=(\m Y\m X^{-1})^{\frac{1}{2}}.
+\end{equation}
+
+\end_inset
+
+The elaborate statement about this vector transport is in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ferreira_newton_2006,jeuris_survey_nodate,sra_conic_2015"
+literal "false"
+
+\end_inset
+
+.
 \begin_inset Float figure
 placement tbph
 wide false
@@ -1143,9 +1365,16 @@ status open
 
 \begin_layout Plain Layout
 \align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename figure1.pdf
-	width 50page%
+	width 30page%
 
 \end_inset
 
@@ -1177,6 +1406,295 @@ Retraction
 \end_inset
 
 
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure2.pdf
+	width 30page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Vector-transport"
+
+\end_inset
+
+Vector transport
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Simplified representations of a retraction and a vector transport
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Finite difference approximation of the Hessian
+\end_layout
+
+\begin_layout Standard
+In order to minimize a smooth function on a Riemannian manifold, several
+ optimization algorithms require computation of the Riemannian Hessian,
+ 
+\begin_inset Formula $\operatorname{Hess}f(x)[\xi_{x}]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Exact Hessian
+\end_layout
+
+\begin_layout Standard
+The Riemannian Hessian of a real-valued function 
+\begin_inset Formula $f$
+\end_inset
+
+ at a point 
+\begin_inset Formula $\m C$
+\end_inset
+
+ on the manifold is a linear, symmetric mapping from the tangent space into
+ itself given by
+\begin_inset Formula 
+\begin{equation}
+\operatorname{Hess}f(\m C)[\xi_{\m C}]=\nabla_{\xi_{\m C}}\operatorname{grad}f,
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\nabla$
+\end_inset
+
+ is the so-called Levi-Civita connection, which depends on the inner product,
+ hence the Hessian will also depend on the inner product.
+\end_layout
+
+\begin_layout Standard
+When endowed with the intrinsic inner product, the Levi-Civita connection
+ is given by
+\begin_inset Formula 
+\begin{equation}
+\nabla_{\zeta_{\m C}}\xi=D(\xi)(\m C)[\zeta_{\m C}]-\frac{1}{2}(\zeta_{\m C}\m C^{-1}\xi_{\m C}+\xi_{\m C}\m C^{-1}\zeta_{\m C}),
+\end{equation}
+
+\end_inset
+
+which satisfies all properties of the Levi-Civita connection.
+ Combine the equation above, the Hessian becomes
+\begin_inset Formula 
+\begin{equation}
+\operatorname{Hess}f(\m C)[\xi_{\m C}]=D(\operatorname{grad}f)(\m C)[\xi_{\m C}]-\frac{1}{2}(\xi_{\m C}\m C^{-1}\operatorname{grad}f(\m C)+\operatorname{grad}f(\m C)\m C^{-1}\xi_{\m C}),\label{eq:Hess}
+\end{equation}
+
+\end_inset
+
+In this case using (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:grad"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) leads to
+\begin_inset Formula 
+\begin{equation}
+\operatorname{Hess}f(\m C)[\xi_{\m C}]=\frac{1}{2}\xi_{\m C}(\m X^{T}\m X-\m C^{-1}/M)\m C+\frac{1}{2}\m C(\m X^{T}\m X-\m C^{-1}/M)\xi_{\m C}+\xi_{\m C}/M.
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Hessian by decomposition
+\end_layout
+
+\begin_layout Standard
+Another way to compute Hessian is described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "jeuris_survey_nodate,ferreira_newton_2013,ferreira_newton_2006,rentmeesters_algorithm_nodate"
+literal "false"
+
+\end_inset
+
+.
+ This method is established by exploiting some results about Jacobi fields
+ together with the fact that the curvature endomorphism 
+\begin_inset Formula $R$
+\end_inset
+
+ is parallel in these manifolds.
+ The exact procedure consists of determining the components of a decomposition
+ and then combining them to form the actual Hessian.
+ The Hessian computed in this way is theoretically equal to the Hessian
+ in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Hess"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), but has higher computation complexity.
+\end_layout
+
+\begin_layout Subsubsection
+Hessian by approximation
+\end_layout
+
+\begin_layout Standard
+As obtaining an explicit expression for the Hessian may be tedious, it is
+ natural to avenues to approximate it numerically.
+ To this end, we consider finite difference approximation.
+\end_layout
+
+\begin_layout Standard
+For any smooth curve 
+\begin_inset Formula $\gamma:I\rightarrow\mathcal{M}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\gamma(0)=x$
+\end_inset
+
+ and 
+\begin_inset Formula $\gamma'(0)=\xi_{x}$
+\end_inset
+
+, it holds that
+\begin_inset Formula 
+\begin{equation}
+\operatorname{Hess}f(x)[\xi_{x}]=\nabla_{\xi_{x}}\operatorname{grad}f=\frac{D}{dt}(\operatorname{grad}f(\gamma(0))),\label{eq:hess}
+\end{equation}
+
+\end_inset
+
+where the 
+\begin_inset Formula $\frac{D}{dt}$
+\end_inset
+
+ is the differential notation defined on vector transportation.
+ The right-hand side in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:hess"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) can be further rewrite as
+\begin_inset Formula 
+\begin{equation}
+\operatorname{Hess}f(x)[\xi_{x}]=\lim_{t\rightarrow0}\frac{\text{\ensuremath{\mathcal{T}_{\gamma(t),0}(\operatorname{grad}f(\gamma(t)))}}-\operatorname{grad}f(x)}{t}.
+\end{equation}
+
+\end_inset
+
+This suggests the approximation
+\begin_inset Formula 
+\begin{equation}
+\operatorname{Hess}f(x)[\xi_{x}]\approx\frac{\text{\ensuremath{\mathcal{T}_{\gamma(t),0}(\operatorname{grad}f(\gamma(\hat{t})))}}-\operatorname{grad}f(x)}{\hat{t}},\label{eq:hess approx}
+\end{equation}
+
+\end_inset
+
+for some well-chosen 
+\begin_inset Formula $\hat{t}>0$
+\end_inset
+
+.
+ Implementing this formula takes little effort compared to the hassle of
+ deriving formulas for the Hessian directly (see numerical results in Figure
+ ).
+ In the Manopt toolbox, the default behavior when the Hessian is needed
+ but unavailable is to fall back on (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:hess approx"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) with 
+\begin_inset Formula $\gamma(\hat{t})=R_{x}(\hat{t}\xi_{x})$
+\end_inset
+
+ and 
+\begin_inset Formula $\hat{t}>0$
+\end_inset
+
+ set such that 
+\begin_inset Formula $\|\hat{t}\xi_{x}\|=2^{-14}$
+\end_inset
+
+.
+ This costs one retraction, one gradient evaluation, and one call to a transport
+er.
+\end_layout
+
+\begin_layout Section
+Numerical Results
+\end_layout
+
+\begin_layout Standard
+We now provide numerical examples of our algorithm.
+ We first focus on the performance of different algorithm.
 \end_layout
 
 \begin_layout Standard
