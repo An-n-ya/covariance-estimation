@@ -4,26 +4,35 @@ rng('default')
 n = 10;
 
 D = diag(rand(n,1));
+T = diag(rand(n,1));
 U = orth(rand(n,n));
 R0 = U' * D * U;
+T = U' * (D+0.1*T) * U;
+T = T/trace(T);
+% R0 = eye(n)*5;
 R0 = R0/trace(R0);
-m = 100;
+m = n*10;
 X = mvnrnd(zeros(n,1),R0,m);
+alpha = 0.1;
 
 manifold = sympositivedefinitefactory(n);
 maniflod.transp = manifold.paralleltransp;
 problem.M = manifold;
-problem.cost = @(R) -1/m * log(det(R)) + trace(X*R*X');
-problem.grad = @(R) R*(X'*X-inv(R)/m)*R;
-problem.hess = @(R,Rdot) Rdot*(X'*X-inv(R)/m)*R/2+R*(X'*X-inv(R)/m)*Rdot/2+Rdot/m; 
+problem.cost = @(R) -1/m * log(det(R)) + trace(X*R*X') + alpha * (n*log(trace(R*T))-log(det(R)));
+problem.grad = @(R) R*(X'*X-inv(R)/m + alpha*(T*n/trace(R*T)*eye(n)-inv(R)))*R;
+% problem.hess = @(R,Rdot) Rdot*(X'*X-inv(R)/m)*R/2+R*(X'*X-inv(R)/m)*Rdot/2+Rdot/m; 
 % checkhessian(problem)
 
-% checkgradient(problem)
+checkgradient(problem)
 
-[R, xcost, info, options] = trustregions(problem);
+[R, xcost, info, options] = steepestdescent(problem);
 R = inv(R)/trace(inv(R));
+t = [info.iter];
+t(end)+1
 MSE = mse(R,R0)
 MSE2 = mse(cov(X),R0)
+
+
 
 
 
@@ -53,14 +62,16 @@ MSE2 = mse(cov(X),R0)
 % end
 % plot(MSE)
 
-figure(1)
-hold on
-semilogy([info.iter], [info.gradnorm], '.-');
-xlabel('Iteration number');
-ylabel('Norm of the gradient of f');
-
-figure(2)
-hold on
-loglog([info.time], [info.gradnorm], '.-');
-xlabel('Time');
-ylabel('Norm of the gradient of f');
+% figure(1)
+% hold on
+% semilogy([info.iter], [info.gradnorm], '.-');
+% xlabel('Iteration number');
+% ylabel('Norm of the gradient of f');
+% 
+% figure(2)
+% hold on
+% loglog([info.time], [info.gradnorm], '.-');
+% xlabel('Time');
+% ylabel('Norm of the gradient of f');
+% legend('Steepest-descent','Conjugate-gradient','Conjugate-gradient (intrinsic-vec)','Trust-regions (approx Hess)','Trust-regions (exact Hess)','Location','southwest')
+% print('eigen_plot',1,'-depsc','-painters')

@@ -1,3 +1,5 @@
+clc
+clear
 rng('default')
 n = 10;
 
@@ -5,10 +7,7 @@ D = diag(rand(n,1));
 U = orth(rand(n,n));
 R0 = U' * D * U;
 R0 = R0/trace(R0);
-% m = 100;
-i = 1;
-for m = 20:10:100
-for j = 1:100
+m = n*20;
 X = mvnrnd(zeros(n,1),R0,m);
 
 manifold = sympositivedefinitefactory(n);
@@ -16,18 +15,47 @@ maniflod.transp = manifold.paralleltransp;
 problem.M = manifold;
 problem.cost = @(R) -1/m * log(det(R)) + trace(X*R*X');
 problem.grad = @(R) R*(X'*X-inv(R)/m)*R;
- 
+problem.hess = @(R,Rdot) Rdot*(X'*X-inv(R)/m)*R/2+R*(X'*X-inv(R)/m)*Rdot/2+Rdot/m; 
+% checkhessian(problem)
+
 % checkgradient(problem)
 
-[R, xcost, info, options] = conjugategradient(problem);
+[R, xcost, info, options] = steepestdescent(problem);
 R = inv(R)/trace(inv(R));
-% inv(R)/m^2-cov(X)
-% MSE(i) = mse(inv(R)/m^2-R0);
-MSE(i) = mse(R,R0);
-i=i+1;
+t = [info.iter];
+t(end)+1
+MSE = mse(R,R0)
+% MSE2 = mse(cov(X),R0)
 
-end
-plot(MSE)
+
+
+
+
+
+% i = 1;
+% for m = 20:10:100
+%     for j = 1:20
+%         X = mvnrnd(zeros(n,1),R0,m);
+% 
+%         manifold = sympositivedefinitefactory(n);
+%         maniflod.transp = manifold.paralleltransp;
+%         problem.M = manifold;
+%         problem.cost = @(R) -1/m * log(det(R)) + trace(X*R*X');
+%         problem.grad = @(R) R*(X'*X-inv(R)/m)*R;
+% 
+%         % checkgradient(problem)
+% 
+%         [R, xcost, info, options] = conjugategradient(problem);
+%         R = inv(R)/trace(inv(R));
+%         % inv(R)/m^2-cov(X)
+%         % MSE(i) = mse(inv(R)/m^2-R0);
+%         MSE_t(j) = mse(R,R0);
+%     end
+%     MSE(i) = mean(MSE_t);
+%     i=i+1;
+% 
+% end
+% plot(MSE)
 
 % figure(1)
 % hold on
@@ -40,3 +68,5 @@ plot(MSE)
 % loglog([info.time], [info.gradnorm], '.-');
 % xlabel('Time');
 % ylabel('Norm of the gradient of f');
+% legend('Steepest-descent','Conjugate-gradient','Conjugate-gradient (intrinsic-vec)','Trust-regions (approx Hess)','Trust-regions (exact Hess)','Location','southwest')
+% print('eigen_plot',1,'-depsc','-painters')

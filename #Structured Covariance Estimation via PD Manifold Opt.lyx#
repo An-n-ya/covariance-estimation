@@ -7,6 +7,11 @@
 \textclass IEEEtran
 \begin_preamble
 \usepackage{amssymb}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{multirow}
 \def\m{\mathbf}
 \end_preamble
 \options onecolumn
@@ -1343,7 +1348,7 @@ this parallel transport can be written in a compact form that is also computatio
 nally more advantageous, namely,
 \begin_inset Formula 
 \begin{equation}
-\mathcal{T}_{\m X,\m Y}(\xi_{\m X})=E\xi_{\m X}E^{*},\quad\text{where }E=(\m Y\m X^{-1})^{\frac{1}{2}}.
+\mathcal{T}_{\m X,\m Y}(\xi_{\m X})=E\xi_{\m X}E^{*},\quad\text{where }E=(\m Y\m X^{-1})^{\frac{1}{2}}.\label{eq:intrinsic vec}
 \end{equation}
 
 \end_inset
@@ -1357,6 +1362,37 @@ literal "false"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+We also consider another vector transport called parallel vector transport
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "10.3"
+key "boumal_introduction_nodate"
+literal "false"
+
+\end_inset
+
+, In this case, we assume the tangent space on 
+\begin_inset Formula $\m X$
+\end_inset
+
+ is parallel to the tangent space on 
+\begin_inset Formula $\m Y$
+\end_inset
+
+.
+ The parallel vector transport is given by
+\begin_inset Formula 
+\begin{equation}
+\mathcal{T}_{\m X,\m Y}^{\text{para}}(\xi_{\m X})=\xi_{\m X}.\label{eq:parallel vec}
+\end{equation}
+
+\end_inset
+
+ 
 \begin_inset Float figure
 placement tbph
 wide false
@@ -1528,7 +1564,7 @@ which satisfies all properties of the Levi-Civita connection.
  Combine the equation above, the Hessian becomes
 \begin_inset Formula 
 \begin{equation}
-\operatorname{Hess}f(\m C)[\xi_{\m C}]=D(\operatorname{grad}f)(\m C)[\xi_{\m C}]-\frac{1}{2}(\xi_{\m C}\m C^{-1}\operatorname{grad}f(\m C)+\operatorname{grad}f(\m C)\m C^{-1}\xi_{\m C}),
+\operatorname{Hess}f(\m C)[\xi_{\m C}]=D(\operatorname{grad}f)(\m C)[\xi_{\m C}]-\frac{1}{2}(\xi_{\m C}\m C^{-1}\operatorname{grad}f(\m C)+\operatorname{grad}f(\m C)\m C^{-1}\xi_{\m C}),\label{eq:Hess}
 \end{equation}
 
 \end_inset
@@ -1574,7 +1610,20 @@ literal "false"
 \end_inset
 
  is parallel in these manifolds.
- The exact procedure consists 
+ The exact procedure consists of determining the components of a decomposition
+ and then combining them to form the actual Hessian.
+ The Hessian computed in this way is theoretically equal to the Hessian
+ in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Hess"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), but has higher computation complexity.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1676,12 +1725,922 @@ er.
 \end_layout
 
 \begin_layout Section
+Criticism the existing work
+\end_layout
+
+\begin_layout Section
+Regularizing Covariance Estimation (Contribution)
+\end_layout
+
+\begin_layout Standard
+Sometimes we have some priori information about the covariance, we can add
+ a regularization term to improve the estimation accuracy by using these
+ priori information.
+ We define our regularized estimator as the solution to 
+\begin_inset Formula 
+\begin{equation}
+\begin{aligned} & \mathop{\text{minimize}}_{\mathbf{C}\in\mathbb{P}_{d}} &  & \frac{1}{M}\log\det(\mathbf{R})+\text{tr}(\m X^{T}\m R\m X)\end{aligned}
++\alpha h(\m R).\label{eq:objective function 2}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\text{\ensuremath{\alpha}}$
+\end_inset
+
+ is a regularization parameter, and 
+\begin_inset Formula $h(\m R)$
+\end_inset
+
+ is a penalty function which satisfies that 
+\begin_inset Formula $h(\m R)$
+\end_inset
+
+ is geodesic convex.
+\end_layout
+
+\begin_layout Standard
+These ensure that the overall objective function in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:objective function 2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) is also geodesic convex.
+ We will introduce a few penalties that satisfy this requirement.
+\end_layout
+
+\begin_layout Subsection
+Shrinkage to an Identity Matrix
+\end_layout
+
+\begin_layout Standard
+The most common approach to covariance regularization is shrinkage towards
+ the identity matrix, also known as diagonal loading or ridge regularization.
+ It results in a well conditioned matrix.
+ We use the penalty function proposed below.
+\end_layout
+
+\begin_layout Proposition
+\begin_inset CommandInset label
+LatexCommand label
+name "prop:Consider-the-penalty"
+
+\end_inset
+
+Consider the penalty function
+\begin_inset Formula 
+\begin{equation}
+h^{\text{identity}}(\m R)=n\operatorname{log}\left(\operatorname{Tr}\left\{\m R^{-1}\right\}\right)+\operatorname{log}\operatorname{det}(\m R),\label{eq:h_ident}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $n$
+\end_inset
+
+ is dimension of 
+\begin_inset Formula $\m R$
+\end_inset
+
+.
+ It is geodesic convex.
+ The solution to 
+\begin_inset Formula 
+\begin{equation}
+\begin{aligned}\text{\mathop{\text{minimize}}_{\mathbf{R}\in\mathbb{P}_{d}}} & \quad h^{\text{identity}}(\m R)\end{aligned}
+\end{equation}
+
+\end_inset
+
+is the set of positively scaled identity matrices.
+\end_layout
+
+\begin_layout Proof
+The function is geodesic convex since the first term is a convex log-sum-exp
+ function and the second is linear, Finally, taking the gradient with respect
+ to 
+\begin_inset Formula $\m R^{-1}$
+\end_inset
+
+ and equating to zero yields the condition
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial h^{\text{identity}}(\m R)}{\partial\m R^{-1}}=\frac{n}{\operatorname{Tr}\{\m R^{-1}\}}\m I-\m R=0,
+\end{equation}
+
+\end_inset
+
+which is satisfied if and only if 
+\begin_inset Formula $\m R=c\m I$
+\end_inset
+
+ for some 
+\begin_inset Formula $c$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+We'll also optimize it using manifold optimization algorithms.
+ Let 
+\begin_inset Formula $\m C=\m R^{-1}$
+\end_inset
+
+, consider the intrinsic inner product, the gradient of 
+\begin_inset Formula $h^{\text{identity}}(\m C)$
+\end_inset
+
+ is given by
+\begin_inset Formula 
+\begin{equation}
+\operatorname{grad}h^{\text{identity}}(\m C)=\m C(\frac{n}{\operatorname{Tr}\{\m C\}}\m I-\m C^{-1})\m C.\label{eq:grad_h}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Shrinkage to a Known Positive Definite Matrix
+\end_layout
+
+\begin_layout Standard
+In some applications, it is reasonable to assume additional prior knowledge
+ in the form of a known matrix 
+\begin_inset Formula $\m T\in\mathbb{P}_{d}$
+\end_inset
+
+ which is close to 
+\begin_inset Formula $\m R$
+\end_inset
+
+ in some sense.
+ A straightforward extension to (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:h_ident"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) promotes the solution to any positive definite shrinkage target 
+\begin_inset Formula $\m T$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proposition
+Consider the penalty function
+\begin_inset Formula 
+\begin{equation}
+h^{\text{target}}(\m R)=n\operatorname{log}\left(\operatorname{Tr}\left\{ \m R^{-1}\m T\right\} \right)+\operatorname{log}\operatorname{det}(\m R).
+\end{equation}
+
+\end_inset
+
+It is geodesic convex.
+ The solution to 
+\begin_inset Formula 
+\begin{equation}
+\begin{aligned}\text{\mathop{\text{minimize}}_{\mathbf{R}\in\mathbb{P}_{d}}} & \quad h^{\text{identity}}(\m R)\end{aligned}
+\end{equation}
+
+\end_inset
+
+is the set of matrices 
+\begin_inset Formula $c\m T$
+\end_inset
+
+ for any 
+\begin_inset Formula $c>0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The proof is similar to that of Proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "prop:Consider-the-penalty"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Similarly to (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:grad_h"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), the gradient of 
+\begin_inset Formula $h^{\text{target}}(\m C)$
+\end_inset
+
+ is given by
+\begin_inset Formula 
+\begin{equation}
+\operatorname{grad}h^{\text{identity}}(\m C)=\m C(\frac{n}{\operatorname{Tr}\{\m C\m T\}}\m T-\m C^{-1})\m C.
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Numerical Results
 \end_layout
 
 \begin_layout Standard
-We now provide numerical examples of our algorithm.
- We first focus on the performance of different algorithm.
+We now provide numerical examples of our methods.
+ The numerical simulation is basically divided into two part.
+ For the first part, we focus on the performance of different algorithm.
+ In each simulation, we define a 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ true covariance 
+\begin_inset Formula $R^{\text{true}}$
+\end_inset
+
+ which is symmetric positive definite.
+ In each simulation, we conduct 20 independent experiments.
+ In each experiment, we generate 
+\begin_inset Formula $m$
+\end_inset
+
+ i.i.d.
+ realization of a zero mean multivariate normal of covariance 
+\begin_inset Formula $R^{\text{true}}$
+\end_inset
+
+.
+ These realizations are used to estimate the unknown covariance using various
+ algorithms.
+ In our experiment, we compare three different manifold optimization methods:
+ (i) Steepest-descent; (ii) Conjugate-gradient; (iii) Trust regions.
+ For conjugate gradient method, we test the version with intrinsic vector
+ transport (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:intrinsic vec"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) and the version with parallel vector transport (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:parallel vec"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ For trust region method, we the version with exact Hession in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Hess"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) and the version with approximation Hession in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:hess approx"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ All methods are implemented in MANOPT toolbox 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "manopt"
+literal "false"
+
+\end_inset
+
+ (a MATLAB toolbox for manifold optimization).
+\end_layout
+
+\begin_layout Standard
+We first set 
+\begin_inset Formula $n=10$
+\end_inset
+
+, 
+\begin_inset Formula $m=100$
+\end_inset
+
+.
+ In order to check the convergence of the algorithm, we plot the figure
+ of iteration number v.s.
+ norm of the gradient and the figure of time v.s.
+ norm of the gradient.
+ We find all the methods converge to a very low gradient.
+ Among the methods, trust regions with exact Hessian performs best in terms
+ of running time and iteration.
+ In Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Iteration"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, steepest descent is close to conjugate gradient, because both of them
+ only use the first order information.
+ Both the two version of trust regions gain better performance on iteration.
+ Trust region with exact Hessian performs better because of the more accurate
+ Hessian.
+ On the other hand, approximating Hessian has higher computation complexity
+ (as explained before), trust region with approximation Hessian performs
+ worst in terms of running time consequently.
+\begin_inset Float figure
+placement tbph
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 2- code/iteration.eps
+	width 35page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Iteration"
+
+\end_inset
+
+Iteration number v.s.
+ norm of the gradient
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 2- code/time.eps
+	width 35page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Time"
+
+\end_inset
+
+Time v.s.
+ norm of the gradient
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Contrast with different manifold optimization methods
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+We also test these methods in different dimension, which can be seen in
+ the Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:compare table"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ In order to evaluate the accuracy of the method, we introduce the normalized
+ mean-square errors (NMSEs) defined as
+\begin_inset Formula 
+\begin{equation}
+\operatorname{NMSE}=\frac{\|\hat{R}-R^{\text{true}}\|_{F}}{\|R^{\text{true}}\|_{F}},
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\hat{R}$
+\end_inset
+
+ is the estimated covariance by various algorithms.
+ Due to the scaling ambiguity, we will normalize each covariance to have
+ unit trace before calculating the NMSE.
+\begin_inset VSpace -5bp
+\end_inset
+
+.
+\begin_inset Float table
+placement tbph
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Comparison for different algorithm.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:compare table"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace -5bp
+\end_inset
+
+
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Required iterations and running time for different algorithm.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:iteration-table"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+scalebox{1}{
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+tabcolsep}{2.5mm}{ 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tabular}{cccccc}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hline 
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\backslash
+multirow{2}{*}{Algorithm}&
+\backslash
+multicolumn{4}{c}{(number of dimension $n$, number of samples $m$)}&
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-6}
+\end_layout
+
+\begin_layout Plain Layout
+
+                       & {(5,100)}&     {(10,200)}&{(20,400)}&     {(50,1000)}&
+     {(74,1480)}
+\backslash
+
+\backslash
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hline  
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Steepest descent}&   {26/0.022s}&        {35/0.029s }& {49/0.068s
+ }&        {75/0.273s }& {None }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Conjugate gradient}& {26/0.023s }&       {34/0.034s }& {49/0.081s
+ }&        {77/0.349s }& {95/0.826s }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Conjugate gradient (intrinsic vec)}&   {26/0.024s }&    
+    {34/0.034s }& {49/0.077s }&        {77/0.343s }& {95/0.797s }
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			   {Trust regions (approx Hess)}& {23/0.033s }&       {25/0.048s }& {26/0.070s
+ }&        {28/0.171s }& {29/0.316s }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Trust regions (exact Hess)}&{17/0.020s }&         {18/0.027s
+ }& {19/0.045s }&        {20/0.112s }& {20/0.216s }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hline  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tabular}}}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace -10bp
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NMSE for different algorithm.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:NMSE-table"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+scalebox{1}{
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+tabcolsep}{2.5mm}{ 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tabular}{cccccc}  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hline 
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\backslash
+multirow{2}{*}{Algorithm}&
+\backslash
+multicolumn{4}{c}{(number of dimension $n$, number of samples $m$)}&
+\backslash
+
+\backslash
+ 
+\backslash
+cline{2-6}
+\end_layout
+
+\begin_layout Plain Layout
+
+                       & {(5,100)}&     {(10,200)}&{(20,400)}&     {(50,1000)}&
+     {(100,2000)}
+\backslash
+
+\backslash
+   
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hline  
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Steepest descent}&   {0.2464}&        {0.2056 }& {0.2259 }&
+        {0.2052 }& {None }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Conjugate gradient}& {0.2464 }&       {0.2056 }& {0.2259 }&
+        {0.2052 }& {0.2005 }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Conjugate gradient (intrinsic vec)}&   {0.2464 }&       
+ {0.2056 }& {0.2259 }&        {0.2052 }& {0.2005 }
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			   {Trust regions (approx Hess)}& {0.2464 }&       {0.2056 }& {0.2259 }&
+        {0.2052 }& {0.2005 }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+               {Trust regions (exact Hess)}&{0.2464 }&         {0.2056 }&
+ {0.2259 }&        {0.2052 }& {0.2005 }
+\backslash
+
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hline  
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tabular}}}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+We notice all the algorithms converge to the same point so that all the
+ NMSEs in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:NMSE-table"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ are the same for each algorithms.
+ From Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:iteration-table"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, we know that while the second-order techniques required less iterations,
+ the computational cost associated with each of these iterations was higher
+ than that of the first-order algorithms, nullifying the advantage of a
+ quadratic convergence.
+ But if we conduct the exact Hessian, the computation cost will be lower,
+ which induces a higher performance.
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
